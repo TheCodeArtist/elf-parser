@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <stdbool.h>
 
 #include <elf.h>
 
@@ -20,171 +21,181 @@ void read_elf_header(int fd, Elf32_Ehdr *elf_header)
         assert(read(fd, (void *)elf_header, sizeof(Elf32_Ehdr)) == sizeof(Elf32_Ehdr));
 }
 
-int is_ELF(Elf32_Ehdr elf_header)
+int is_ELF(Elf32_Ehdr *elf_header, bool verbose)
 {
 
 	/* ELF magic bytes are 0x7f,'E','L','F'
 	 * Using  octal escape sequence to represent 0x7f
 	 */
-	if(!strncmp((char*)elf_header.e_ident, "\177ELF", 4)) {
-		debug("ELFMAGIC \t= ELF\n");
+	if(!strncmp((char*)elf_header->e_ident, "\177ELF", 4)) {
+		printf("ELFMAGIC \t= ELF\n");
 	} else {
-		debug("ELFMAGIC mismatch!\n");
+		printf("ELFMAGIC mismatch!\n");
 		/* Not ELF file */
 		return(0);
 	}
 
+	/* At this point we have established that the file IS indeed in ELF.
+	 * The rest of the fn simply logs info obtained from the ELF header.
+	 */
+	if(!verbose)
+		return(1);
+
+
 	/* Storage capacity class */
-	debug("Storage class\t= ");
-	switch(elf_header.e_ident[EI_CLASS])
+	printf("Storage class\t= ");
+	switch(elf_header->e_ident[EI_CLASS])
 	{
 		case ELFCLASS32:
-			debug("32-bit objects\n");
+			printf("32-bit objects\n");
 			break;
 
 		case ELFCLASS64:
-			debug("64-bit objects\n");
+			printf("64-bit objects\n");
 			break;
 
 		default:
-			debug("INVALID CLASS\n");
+			printf("INVALID CLASS\n");
 			break;
 	}
 
 	/* Data Format */
-	debug("Data format\t= ");
-	switch(elf_header.e_ident[EI_DATA])
+	printf("Data format\t= ");
+	switch(elf_header->e_ident[EI_DATA])
 	{
 		case ELFDATA2LSB:
-			debug("2's complement, little endian\n");
+			printf("2's complement, little endian\n");
 			break;
 
 		case ELFDATA2MSB:
-			debug("2's complement, big endian\n");
+			printf("2's complement, big endian\n");
 			break;
 
 		default:
-			debug("INVALID Format\n");
+			printf("INVALID Format\n");
 			break;
 	}
 
 	/* OS ABI */
-	debug("OS ABI\t\t= ");
-	switch(elf_header.e_ident[EI_OSABI])
+	printf("OS ABI\t\t= ");
+	switch(elf_header->e_ident[EI_OSABI])
 	{
 		case ELFOSABI_SYSV:
-			debug("UNIX System V ABI\n");
+			printf("UNIX System V ABI\n");
 			break;
 
 		case ELFOSABI_HPUX:
-			debug("HP-UX\n");
+			printf("HP-UX\n");
 			break;
 
 		case ELFOSABI_NETBSD:
-			debug("NetBSD\n");
+			printf("NetBSD\n");
 			break;
 
 		case ELFOSABI_LINUX:
-			debug("Linux\n");
+			printf("Linux\n");
 			break;
 
 		case ELFOSABI_SOLARIS:
-			debug("Sun Solaris\n");
+			printf("Sun Solaris\n");
 			break;
 
 		case ELFOSABI_AIX:
-			debug("IBM AIX\n");
+			printf("IBM AIX\n");
 			break;
 
 		case ELFOSABI_IRIX:
-			debug("SGI Irix\n");
+			printf("SGI Irix\n");
 			break;
 
 		case ELFOSABI_FREEBSD:
-			debug("FreeBSD\n");
+			printf("FreeBSD\n");
 			break;
 
 		case ELFOSABI_TRU64:
-			debug("Compaq TRU64 UNIX\n");
+			printf("Compaq TRU64 UNIX\n");
 			break;
 
 		case ELFOSABI_MODESTO:
-			debug("Novell Modesto\n");
+			printf("Novell Modesto\n");
 			break;
 
 		case ELFOSABI_OPENBSD:
-			debug("OpenBSD\n");
+			printf("OpenBSD\n");
 			break;
 
 		case ELFOSABI_ARM_AEABI:
-			debug("ARM EABI\n");
+			printf("ARM EABI\n");
 			break;
 
 		case ELFOSABI_ARM:
-			debug("ARM\n");
+			printf("ARM\n");
 			break;
 
 		case ELFOSABI_STANDALONE:
-			debug("Standalone (embedded) app\n");
+			printf("Standalone (embedded) app\n");
 			break;
 
 		default:
-			debug("Unknown (0x%x)\n", elf_header.e_ident[EI_OSABI]);
+			printf("Unknown (0x%x)\n", elf_header->e_ident[EI_OSABI]);
 			break;
 	}
 
 	/* ELF filetype */
-	debug("Filetype \t= ");
-	switch(elf_header.e_type)
+	printf("Filetype \t= ");
+	switch(elf_header->e_type)
 	{
 		case ET_NONE:
-			debug("N/A (0x0)\n");
+			printf("N/A (0x0)\n");
 			break;
 
 		case ET_REL:
-			debug("Relocatable\n");
+			printf("Relocatable\n");
 			break;
 
 		case ET_EXEC:
-			debug("Executable\n");
+			printf("Executable\n");
 			break;
 
 		case ET_DYN:
-			debug("Shared Object\n");
+			printf("Shared Object\n");
 			break;
 		default:
-			debug("Unknown (0x%x)\n", elf_header.e_type);
+			printf("Unknown (0x%x)\n", elf_header->e_type);
 			break;
 	}
 
 	/* ELF Machine-id */
-	debug("Machine\t\t= ");
-	switch(elf_header.e_machine)
+	printf("Machine\t\t= ");
+	switch(elf_header->e_machine)
 	{
 		case EM_NONE:
-			debug("None (0x0)\n");
+			printf("None (0x0)\n");
 			break;
 
 		case EM_386:
-			debug("INTEL x86 (0x%x)\n", EM_386);
+			printf("INTEL x86 (0x%x)\n", EM_386);
 			break;
 
 		case EM_ARM:
-			debug("ARM (0x%x)\n", EM_ARM);
+			printf("ARM (0x%x)\n", EM_ARM);
 			break;
 		default:
-			debug("Machine\t= 0x%x\n", elf_header.e_machine);
+			printf("Machine\t= 0x%x\n", elf_header->e_machine);
 			break;
 	}
 
 	/* Entry point */
-	debug("Entry point\t= 0x%x\n", elf_header.e_entry);
+	printf("Entry point\t= 0x%08x\n", elf_header->e_entry);
 
-	debug("e_ehsize=0x%x\n", elf_header.e_ehsize);
+	/* ELF header size in bytes */
+	printf("ELF header size\t= 0x%08x\n", elf_header->e_ehsize);
 
-	debug("e_phoff=0x%x\n", elf_header.e_phoff);
+	/* Program header starts at */
+	printf("Program Header\t= 0x%08x\n", elf_header->e_phoff);
 
-	debug("e_shoff=0x%x\n", elf_header.e_shoff);
+	/* Section header starts at */
+	printf("Section Header\t= 0x%08x\n", elf_header->e_shoff);
 
 	/* File header contains proper ELF info */
 	return(1);
@@ -209,7 +220,7 @@ int main(int argc, char *argv[])
 	}
 
 	read_elf_header(fd, &file_header);
-	is_ELF(file_header);
+	is_ELF(&file_header, true);
 
 	return(0);
 }
