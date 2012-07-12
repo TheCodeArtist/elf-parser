@@ -197,6 +197,58 @@ int is_ELF(Elf32_Ehdr *elf_header, bool verbose)
 	/* Section header starts at */
 	printf("Section Header\t= 0x%08x\n", elf_header->e_shoff);
 
+	/* File flags (Machine specific)*/
+	printf("File flags \t= 0x%08x\n", elf_header->e_flags);
+
+	/* ELF file flags are machine specific.
+	 * INTEL implements NO flags.
+	 * ARM implements a few.
+	 * Add support below to parse ELF file flags on ARM
+	 */
+	int ef = elf_header->e_flags;
+	printf("\t\t  ");
+
+	if(ef & EF_ARM_RELEXEC)
+		printf(",RELEXEC ");
+
+	if(ef & EF_ARM_HASENTRY)
+		printf(",HASENTRY ");
+
+	if(ef & EF_ARM_INTERWORK)
+		printf(",INTERWORK ");
+
+	if(ef & EF_ARM_APCS_26)
+		printf(",APCS_26 ");
+
+	if(ef & EF_ARM_APCS_FLOAT)
+		printf(",APCS_FLOAT ");
+
+	if(ef & EF_ARM_PIC)
+		printf(",PIC ");
+
+	if(ef & EF_ARM_ALIGN8)
+		printf(",ALIGN8 ");
+
+	if(ef & EF_ARM_NEW_ABI)
+		printf(",NEW_ABI ");
+
+	if(ef & EF_ARM_OLD_ABI)
+		printf(",OLD_ABI ");
+
+	if(ef & EF_ARM_SOFT_FLOAT)
+		printf(",SOFT_FLOAT ");
+
+	if(ef & EF_ARM_VFP_FLOAT)
+		printf(",VFP_FLOAT ");
+
+	if(ef & EF_ARM_MAVERICK_FLOAT)
+		printf(",MAVERICK_FLOAT ");
+
+	printf("\n");
+
+	/* MSB of flags conatins ARM EABI version */
+	printf("ARM EABI\t= Version %d\n", (ef & EF_ARM_EABIMASK)>>24);
+
 	/* File header contains proper ELF info */
 	return(1);
 }
