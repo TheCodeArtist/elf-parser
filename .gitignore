@@ -12,5 +12,7 @@
 *.a
 
 # Miscellany
+elf-parser
 tags
 *.swp
+*.patch
