@@ -12,7 +12,7 @@
 #define DEBUG 1
 
 #define debug(...) \
-            do { if (DEBUG) printf(__VA_ARGS__); } while (0)
+            do { if (DEBUG) printf("<debug>:"__VA_ARGS__); } while (0)
 
 void read_elf_header(int32_t fd, Elf32_Ehdr *elf_header)
 {
