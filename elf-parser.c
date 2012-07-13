@@ -259,12 +259,20 @@ int is_ELF(Elf32_Ehdr *elf_header, bool verbose)
 	return(1);
 }
 
+void read_section_header(int fd, unsigned int sh_offset, Elf32_Shdr *sh)
+{
+        assert(sh != NULL);
+        assert(lseek(fd, (off_t)sh_offset, SEEK_SET) == (off_t)sh_offset);
+        assert(read(fd, (void *)sh, sizeof(Elf32_Shdr)) == sizeof(Elf32_Shdr));
+}
 
+/* Main entry point of elf-parser */
 int main(int argc, char *argv[])
 {
 
 	int fd;
-	Elf32_Ehdr file_header;
+	Elf32_Ehdr eh;
+	Elf32_Shdr sh;
 
 	if(argc!=2) {
 		printf("Usage: elf-parser <ELF-file>\n");
@@ -277,8 +285,12 @@ int main(int argc, char *argv[])
 		return(0);
 	}
 
-	read_elf_header(fd, &file_header);
-	is_ELF(&file_header, true);
+	/* ELF header at start of file */
+	read_elf_header(fd, &eh);
+	is_ELF(&eh, true);
+
+	/* section header offset obtained from ELF header */
+	read_section_header(fd, eh.e_shoff, &sh);
 
 	return(0);
 }
