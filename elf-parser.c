@@ -191,11 +191,17 @@ int is_ELF(Elf32_Ehdr *elf_header, bool verbose)
 	/* ELF header size in bytes */
 	printf("ELF header size\t= 0x%08x\n", elf_header->e_ehsize);
 
-	/* Program header starts at */
-	printf("Program Header\t= 0x%08x\n", elf_header->e_phoff);
+	/* Program Header */
+	printf("Program Header\t= ");
+	printf("0x%08x\n", elf_header->e_phoff);		/* start */
+	printf("\t\t  %d entries\n", elf_header->e_phnum);	/* num entry */
+	printf("\t\t  %d bytes\n", elf_header->e_phentsize);	/* size/entry */
 
 	/* Section header starts at */
-	printf("Section Header\t= 0x%08x\n", elf_header->e_shoff);
+	printf("Section Header\t= ");
+	printf("0x%08x\n", elf_header->e_shoff);		/* start */
+	printf("\t\t  %d entries\n", elf_header->e_shnum);	/* num entry */
+	printf("\t\t  %d bytes\n", elf_header->e_shentsize);	/* size/entry */
 
 	/* File flags (Machine specific)*/
 	printf("File flags \t= 0x%08x\n", elf_header->e_flags);
