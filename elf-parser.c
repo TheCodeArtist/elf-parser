@@ -280,7 +280,7 @@ int32_t main(int32_t argc, char *argv[])
 		return(0);
 	}
 
-	fd = open(argv[1], O_RDONLY);
+	fd = open(argv[1], O_RDONLY|O_SYNC);
 	if(fd<0) {
 		printf("Error %d Unable to open %s\n", fd, argv[1]);
 		return(0);
