@@ -14,14 +14,14 @@
 #define debug(...) \
             do { if (DEBUG) printf(__VA_ARGS__); } while (0)
 
-void read_elf_header(int fd, Elf32_Ehdr *elf_header)
+void read_elf_header(int32_t fd, Elf32_Ehdr *elf_header)
 {
-        assert(elf_header != NULL);
-        assert(lseek(fd, (off_t)0, SEEK_SET) == (off_t)0);
-        assert(read(fd, (void *)elf_header, sizeof(Elf32_Ehdr)) == sizeof(Elf32_Ehdr));
+	assert(elf_header != NULL);
+	assert(lseek(fd, (off_t)0, SEEK_SET) == (off_t)0);
+	assert(read(fd, (void *)elf_header, sizeof(Elf32_Ehdr)) == sizeof(Elf32_Ehdr));
 }
 
-int is_ELF(Elf32_Ehdr elf_header, bool verbose)
+int32_t is_ELF(Elf32_Ehdr elf_header, bool verbose)
 {
 
 	/* ELF magic bytes are 0x7f,'E','L','F'
@@ -192,26 +192,27 @@ int is_ELF(Elf32_Ehdr elf_header, bool verbose)
 	printf("ELF header size\t= 0x%08x\n", elf_header.e_ehsize);
 
 	/* Program Header */
-	printf("Program Header\t= ");
+	printf("\nProgram Header\t= ");
 	printf("0x%08x\n", elf_header.e_phoff);		/* start */
 	printf("\t\t  %d entries\n", elf_header.e_phnum);	/* num entry */
 	printf("\t\t  %d bytes\n", elf_header.e_phentsize);	/* size/entry */
 
 	/* Section header starts at */
-	printf("Section Header\t= ");
+	printf("\nSection Header\t= ");
 	printf("0x%08x\n", elf_header.e_shoff);		/* start */
 	printf("\t\t  %d entries\n", elf_header.e_shnum);	/* num entry */
 	printf("\t\t  %d bytes\n", elf_header.e_shentsize);	/* size/entry */
+	printf("\t\t  0x%08x (string table offset)\n", elf_header.e_shstrndx);
 
 	/* File flags (Machine specific)*/
-	printf("File flags \t= 0x%08x\n", elf_header.e_flags);
+	printf("\nFile flags \t= 0x%08x\n", elf_header.e_flags);
 
 	/* ELF file flags are machine specific.
 	 * INTEL implements NO flags.
 	 * ARM implements a few.
 	 * Add support below to parse ELF file flags on ARM
 	 */
-	int ef = elf_header.e_flags;
+	int32_t ef = elf_header.e_flags;
 	printf("\t\t  ");
 
 	if(ef & EF_ARM_RELEXEC)
@@ -267,10 +268,10 @@ void read_section_header(int fd, unsigned int sh_offset, Elf32_Shdr *sh)
 }
 
 /* Main entry point of elf-parser */
-int main(int argc, char *argv[])
+int32_t main(int32_t argc, char *argv[])
 {
 
-	int fd;
+	int32_t fd;
 	Elf32_Ehdr eh;
 	Elf32_Shdr sh;
 
