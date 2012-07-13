@@ -21,13 +21,13 @@ void read_elf_header(int fd, Elf32_Ehdr *elf_header)
         assert(read(fd, (void *)elf_header, sizeof(Elf32_Ehdr)) == sizeof(Elf32_Ehdr));
 }
 
-int is_ELF(Elf32_Ehdr *elf_header, bool verbose)
+int is_ELF(Elf32_Ehdr elf_header, bool verbose)
 {
 
 	/* ELF magic bytes are 0x7f,'E','L','F'
 	 * Using  octal escape sequence to represent 0x7f
 	 */
-	if(!strncmp((char*)elf_header->e_ident, "\177ELF", 4)) {
+	if(!strncmp((char*)elf_header.e_ident, "\177ELF", 4)) {
 		printf("ELFMAGIC \t= ELF\n");
 	} else {
 		printf("ELFMAGIC mismatch!\n");
@@ -44,7 +44,7 @@ int is_ELF(Elf32_Ehdr *elf_header, bool verbose)
 
 	/* Storage capacity class */
 	printf("Storage class\t= ");
-	switch(elf_header->e_ident[EI_CLASS])
+	switch(elf_header.e_ident[EI_CLASS])
 	{
 		case ELFCLASS32:
 			printf("32-bit objects\n");
@@ -61,7 +61,7 @@ int is_ELF(Elf32_Ehdr *elf_header, bool verbose)
 
 	/* Data Format */
 	printf("Data format\t= ");
-	switch(elf_header->e_ident[EI_DATA])
+	switch(elf_header.e_ident[EI_DATA])
 	{
 		case ELFDATA2LSB:
 			printf("2's complement, little endian\n");
@@ -78,7 +78,7 @@ int is_ELF(Elf32_Ehdr *elf_header, bool verbose)
 
 	/* OS ABI */
 	printf("OS ABI\t\t= ");
-	switch(elf_header->e_ident[EI_OSABI])
+	switch(elf_header.e_ident[EI_OSABI])
 	{
 		case ELFOSABI_SYSV:
 			printf("UNIX System V ABI\n");
@@ -137,13 +137,13 @@ int is_ELF(Elf32_Ehdr *elf_header, bool verbose)
 			break;
 
 		default:
-			printf("Unknown (0x%x)\n", elf_header->e_ident[EI_OSABI]);
+			printf("Unknown (0x%x)\n", elf_header.e_ident[EI_OSABI]);
 			break;
 	}
 
 	/* ELF filetype */
 	printf("Filetype \t= ");
-	switch(elf_header->e_type)
+	switch(elf_header.e_type)
 	{
 		case ET_NONE:
 			printf("N/A (0x0)\n");
@@ -161,13 +161,13 @@ int is_ELF(Elf32_Ehdr *elf_header, bool verbose)
 			printf("Shared Object\n");
 			break;
 		default:
-			printf("Unknown (0x%x)\n", elf_header->e_type);
+			printf("Unknown (0x%x)\n", elf_header.e_type);
 			break;
 	}
 
 	/* ELF Machine-id */
 	printf("Machine\t\t= ");
-	switch(elf_header->e_machine)
+	switch(elf_header.e_machine)
 	{
 		case EM_NONE:
 			printf("None (0x0)\n");
@@ -181,37 +181,37 @@ int is_ELF(Elf32_Ehdr *elf_header, bool verbose)
 			printf("ARM (0x%x)\n", EM_ARM);
 			break;
 		default:
-			printf("Machine\t= 0x%x\n", elf_header->e_machine);
+			printf("Machine\t= 0x%x\n", elf_header.e_machine);
 			break;
 	}
 
 	/* Entry point */
-	printf("Entry point\t= 0x%08x\n", elf_header->e_entry);
+	printf("Entry point\t= 0x%08x\n", elf_header.e_entry);
 
 	/* ELF header size in bytes */
-	printf("ELF header size\t= 0x%08x\n", elf_header->e_ehsize);
+	printf("ELF header size\t= 0x%08x\n", elf_header.e_ehsize);
 
 	/* Program Header */
 	printf("Program Header\t= ");
-	printf("0x%08x\n", elf_header->e_phoff);		/* start */
-	printf("\t\t  %d entries\n", elf_header->e_phnum);	/* num entry */
-	printf("\t\t  %d bytes\n", elf_header->e_phentsize);	/* size/entry */
+	printf("0x%08x\n", elf_header.e_phoff);		/* start */
+	printf("\t\t  %d entries\n", elf_header.e_phnum);	/* num entry */
+	printf("\t\t  %d bytes\n", elf_header.e_phentsize);	/* size/entry */
 
 	/* Section header starts at */
 	printf("Section Header\t= ");
-	printf("0x%08x\n", elf_header->e_shoff);		/* start */
-	printf("\t\t  %d entries\n", elf_header->e_shnum);	/* num entry */
-	printf("\t\t  %d bytes\n", elf_header->e_shentsize);	/* size/entry */
+	printf("0x%08x\n", elf_header.e_shoff);		/* start */
+	printf("\t\t  %d entries\n", elf_header.e_shnum);	/* num entry */
+	printf("\t\t  %d bytes\n", elf_header.e_shentsize);	/* size/entry */
 
 	/* File flags (Machine specific)*/
-	printf("File flags \t= 0x%08x\n", elf_header->e_flags);
+	printf("File flags \t= 0x%08x\n", elf_header.e_flags);
 
 	/* ELF file flags are machine specific.
 	 * INTEL implements NO flags.
 	 * ARM implements a few.
 	 * Add support below to parse ELF file flags on ARM
 	 */
-	int ef = elf_header->e_flags;
+	int ef = elf_header.e_flags;
 	printf("\t\t  ");
 
 	if(ef & EF_ARM_RELEXEC)
@@ -287,7 +287,7 @@ int main(int argc, char *argv[])
 
 	/* ELF header at start of file */
 	read_elf_header(fd, &eh);
-	is_ELF(&eh, true);
+	is_ELF(eh, true);
 
 	/* section header offset obtained from ELF header */
 	read_section_header(fd, eh.e_shoff, &sh);
