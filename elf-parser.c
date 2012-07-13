@@ -260,11 +260,56 @@ int32_t is_ELF(Elf32_Ehdr elf_header, bool verbose)
 	return(1);
 }
 
-void read_section_header(int fd, unsigned int sh_offset, Elf32_Shdr *sh)
+void read_section_header_table(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 {
-        assert(sh != NULL);
-        assert(lseek(fd, (off_t)sh_offset, SEEK_SET) == (off_t)sh_offset);
-        assert(read(fd, (void *)sh, sizeof(Elf32_Shdr)) == sizeof(Elf32_Shdr));
+	uint32_t i;
+
+	assert(lseek(fd, (off_t)eh.e_shoff, SEEK_SET) == (off_t)eh.e_shoff);
+
+	for(i=0; i<eh.e_shnum; i++) {
+		assert(read(fd, (void *)&sh_table[i], eh.e_shentsize)
+			 == eh.e_shentsize);
+	}
+
+}
+
+char * read_section(int32_t fd, Elf32_Shdr sh)
+{
+	char* buff = malloc(sh.sh_size);
+	if(!buff) {
+		printf("%s:Failed to allocate %dbytes\n",
+			__func__, sh.sh_size);
+	}
+
+	assert(buff != NULL);
+	assert(lseek(fd, (off_t)sh.sh_offset, SEEK_SET) == (off_t)sh.sh_offset);
+	assert(read(fd, (void *)buff, sh.sh_size) == sh.sh_size);
+
+	return buff;
+}
+
+void print_section_headers(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
+{
+	uint32_t i;
+	char* sh_str;	/* section-header string-table is also a section. */
+
+	/* Read section-header string-table */
+	debug("eh.e_shstrndx=0x%x\n", eh.e_shstrndx);
+	sh_str = read_section(fd, sh_table[eh.e_shstrndx]);
+
+	printf(" idx offset     load-addr  size       algn flags      type\n");
+
+	for(i=0; i<eh.e_shnum; i++) {
+		printf(" %03d ", i);
+		printf("0x%08x ", sh_table[i].sh_offset);
+		printf("0x%08x ", sh_table[i].sh_addr);
+		printf("0x%08x ", sh_table[i].sh_size);
+		printf("%4d ", sh_table[i].sh_addralign);
+		printf("0x%08x ", sh_table[i].sh_flags);
+		printf("0x%08x ", sh_table[i].sh_type);
+		printf("%s\t", (sh_str + sh_table[i].sh_name));
+		printf("\n");
+	}
 }
 
 /* Main entry point of elf-parser */
@@ -273,7 +318,7 @@ int32_t main(int32_t argc, char *argv[])
 
 	int32_t fd;
 	Elf32_Ehdr eh;
-	Elf32_Shdr sh;
+	Elf32_Shdr* sh;
 
 	if(argc!=2) {
 		printf("Usage: elf-parser <ELF-file>\n");
@@ -290,8 +335,15 @@ int32_t main(int32_t argc, char *argv[])
 	read_elf_header(fd, &eh);
 	is_ELF(eh, true);
 
-	/* section header offset obtained from ELF header */
-	read_section_header(fd, eh.e_shoff, &sh);
+	/* section header table */
+	sh = malloc(eh.e_shentsize * eh.e_shnum);
+	if(!sh) {
+		printf("Failed to allocate %dbytes\n", (sizeof(Elf32_Shdr) * eh.e_shnum));
+	}
+
+	read_section_header_table(fd, eh, sh);
+	print_section_headers(fd, eh, sh);
+
 
 	return(0);
 }
