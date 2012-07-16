@@ -21,26 +21,27 @@ void read_elf_header(int32_t fd, Elf32_Ehdr *elf_header)
 	assert(read(fd, (void *)elf_header, sizeof(Elf32_Ehdr)) == sizeof(Elf32_Ehdr));
 }
 
-int32_t is_ELF(Elf32_Ehdr elf_header, bool verbose)
-{
 
+bool is_ELF(Elf32_Ehdr eh)
+{
 	/* ELF magic bytes are 0x7f,'E','L','F'
 	 * Using  octal escape sequence to represent 0x7f
 	 */
-	if(!strncmp((char*)elf_header.e_ident, "\177ELF", 4)) {
+	if(!strncmp((char*)eh.e_ident, "\177ELF", 4)) {
 		printf("ELFMAGIC \t= ELF\n");
+		/* IS a ELF file */
+		return 1;
 	} else {
 		printf("ELFMAGIC mismatch!\n");
 		/* Not ELF file */
-		return(0);
+		return 0;
 	}
+}
 
-	/* At this point we have established that the file IS indeed in ELF.
-	 * The rest of the fn simply logs info obtained from the ELF header.
-	 */
-	if(!verbose)
-		return(1);
 
+
+void print_elf_header(Elf32_Ehdr elf_header)
+{
 
 	/* Storage capacity class */
 	printf("Storage class\t= ");
@@ -256,8 +257,8 @@ int32_t is_ELF(Elf32_Ehdr elf_header, bool verbose)
 	/* MSB of flags conatins ARM EABI version */
 	printf("ARM EABI\t= Version %d\n", (ef & EF_ARM_EABIMASK)>>24);
 
-	/* File header contains proper ELF info */
-	return(1);
+	printf("\n");	/* End of ELF header */
+
 }
 
 void read_section_header_table(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
@@ -317,34 +318,40 @@ int32_t main(int32_t argc, char *argv[])
 {
 
 	int32_t fd;
-	Elf32_Ehdr eh;
-	Elf32_Shdr* sh;
+	Elf32_Ehdr eh;		/* elf-header is fixed size */
+	Elf32_Shdr* sh_tbl;	/* section-header table is variable size */
 
 	if(argc!=2) {
 		printf("Usage: elf-parser <ELF-file>\n");
-		return(0);
+		return 0;
 	}
 
 	fd = open(argv[1], O_RDONLY|O_SYNC);
 	if(fd<0) {
 		printf("Error %d Unable to open %s\n", fd, argv[1]);
-		return(0);
+		return 0;
 	}
 
 	/* ELF header at start of file */
 	read_elf_header(fd, &eh);
-	is_ELF(eh, true);
+	if(!is_ELF(eh)) {
+		return 0;
+	}
+	print_elf_header(eh);
 
 	/* section header table */
-	sh = malloc(eh.e_shentsize * eh.e_shnum);
-	if(!sh) {
-		printf("Failed to allocate %dbytes\n", (sizeof(Elf32_Shdr) * eh.e_shnum));
+	sh_tbl = malloc(eh.e_shentsize * eh.e_shnum);
+	if(!sh_tbl) {
+		printf("Failed to allocate %d bytes\n",
+			(eh.e_shentsize * eh.e_shnum));
 	}
 
-	read_section_header_table(fd, eh, sh);
-	print_section_headers(fd, eh, sh);
+	read_section_header_table(fd, eh, sh_tbl);
+	print_section_headers(fd, eh, sh_tbl);
 
 
-	return(0);
+
+
+	return 0;
 }
 
