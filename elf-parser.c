@@ -298,7 +298,12 @@ void print_section_headers(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 	debug("eh.e_shstrndx=0x%x\n", eh.e_shstrndx);
 	sh_str = read_section(fd, sh_table[eh.e_shstrndx]);
 
-	printf(" idx offset     load-addr  size       algn flags      type\n");
+	printf("========================================");
+	printf("========================================\n");
+	printf(" idx offset     load-addr  size       algn"
+		 " flags      type       section\n");
+	printf("========================================");
+	printf("========================================\n");
 
 	for(i=0; i<eh.e_shnum; i++) {
 		printf(" %03d ", i);
@@ -311,6 +316,9 @@ void print_section_headers(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 		printf("%s\t", (sh_str + sh_table[i].sh_name));
 		printf("\n");
 	}
+	printf("========================================");
+	printf("========================================\n");
+	printf("\n");	/* end of section header table */
 }
 
 /* Main entry point of elf-parser */
