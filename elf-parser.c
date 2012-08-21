@@ -365,6 +365,51 @@ void print_symbols(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 	}
 }
 
+void save_text_section(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
+{
+	uint32_t i;
+	int32_t fd2;	/* to write text.S in current directory */
+	char* sh_str;	/* section-header string-table is also a section. */
+	char* buf;	/* buffer to hold contents of the .text section */
+
+	/*   */
+	char *pwd = getcwd(NULL, (size_t)NULL);
+	printf("%s\n", pwd);
+	pwd = realloc(pwd, strlen(pwd)+8);
+	strcat(pwd,"/text.S");
+	printf("%s\n", pwd);
+
+	/* Read section-header string-table */
+	debug("eh.e_shstrndx = 0x%x\n", eh.e_shstrndx);
+	sh_str = read_section(fd, sh_table[eh.e_shstrndx]);
+
+	for(i=0; i<eh.e_shnum; i++) {
+		if(!strcmp(".text", (sh_str + sh_table[i].sh_name))) {
+			printf("Found section\t\".text\"\n");
+			printf("at offset\t0x%08x\n", sh_table[i].sh_offset);
+			printf("of size\t\t0x%08x\n", sh_table[i].sh_size);
+
+			break;
+		}
+	}
+
+	assert(lseek(fd, sh_table[i].sh_offset, SEEK_SET)==sh_table[i].sh_offset);
+	buf = malloc(sh_table[i].sh_size);
+	if(!buf) {
+		printf("Failed to allocate %dbytes!!\n", sh_table[i].sh_size);
+		goto EXIT;
+	}
+	assert(read(fd, buf, sh_table[i].sh_size)==sh_table[i].sh_size);
+	fd2 = open(pwd, O_RDWR|O_SYNC|O_CREAT);
+	write(fd2, buf, sh_table[i].sh_size);
+	fsync(fd2);
+
+EXIT:
+	close(fd2);
+	free(pwd);
+
+}
+
 /* Main entry point of elf-parser */
 int32_t main(int32_t argc, char *argv[])
 {
@@ -406,6 +451,8 @@ int32_t main(int32_t argc, char *argv[])
 	 *  `- SHT_DYNSYM
 	 */
 	print_symbols(fd, eh, sh_tbl);
+
+	save_text_section(fd, eh, sh_tbl);
 
 	return 0;
 }
