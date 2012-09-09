@@ -1,11 +1,14 @@
 CC=gcc
-CFLAGS=-c -Wall -g
+CFLAGS= -Wall -g -I.
+DEPS = elf-parser.h
+OBJ = disasm.o elf-parser.o
 
-all: elf-parser
+%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
-elf-parser: elf-parser.o
-	$(CC) elf-parser.o -o elf-parser
+elfparser: $(OBJ)
+	gcc -o $@ $^ $(CFLAGS)
 
 clean:
-	rm -rf *.o elf-parser
+	rm -rf *.o elfparser
 

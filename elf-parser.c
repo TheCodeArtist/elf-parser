@@ -1,18 +1,4 @@
-#include <stdio.h>
-#include <assert.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
-#include <stdbool.h>
-
-#include <elf.h>
-
-#define DEBUG 1
-
-#define debug(...) \
-            do { if (DEBUG) printf("<debug>:"__VA_ARGS__); } while (0)
+#include <elf-parser.h>
 
 void read_elf_header(int32_t fd, Elf32_Ehdr *elf_header)
 {
@@ -452,7 +438,15 @@ int32_t main(int32_t argc, char *argv[])
 	 */
 	print_symbols(fd, eh, sh_tbl);
 
+	/* Save .text section as text.S
+	 */ 
 	save_text_section(fd, eh, sh_tbl);
+
+	/* Disassemble .text section
+	 * Logs asm instructions to stdout
+	 * Currently supports ARMv7
+	 */
+	disassemble(fd, eh, sh_tbl);
 
 	return 0;
 }
