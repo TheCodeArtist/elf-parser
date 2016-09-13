@@ -14,3 +14,6 @@ This section contains random thoughts during development.
 
 2. Dynamic-linked libraries (*.so) == ELF
    Static-linked libraries  (*.a)  == archive (no ELF!)
+
+
+Licensed under the Creative Commons License. Refer LICENSE.md for more details.
