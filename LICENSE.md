@@ -1,13 +1,21 @@
 
-# Licensed under the Creative Commons License.
-
-> *No separate conditions/restrictions to (re)distribute source-code.*
+# Licensed under the Creative Commons License BY-SA 4.0
 
 ![CC-BY](https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/CC-BY_icon.svg/320px-CC-BY_icon.svg.png)
 
+### Highlights:
+
+- **No separate conditions/restrictions to (re)distribute source-code.**
+
+- **If required, code can be re-used/included in GPL source-code.**
+  
+  > *When someone creates an adaptation of a BY-SA licensed work and includes it in a GPLv3-licensed project, both licenses apply and downstream users must comply with both licenses. However, Section 2(a)(5)(B) of BY-SA 4.0 allows anyone who receives the adapted material downstream to satisfy the conditions of both BY-SA and GPLv3 (i.e. attribution and ShareAlike) in the manner dictated by the GPLv3.*
+  
+  More details on [how one-way compatibility operates](https://wiki.creativecommons.org/wiki/ShareAlike_compatibility:_GPLv3#How_one-compatibility_operates).
+
 ## You are free to:
 
-* Share — copy and redistribute the material in any medium or format
+* Share — copy and redistribute the material in any medium or format.
 * Adapt — remix, transform, and build upon the material for **any purpose, even commercially**.
 
 > *The licensor cannot revoke these freedoms as long as you follow the license terms.*
