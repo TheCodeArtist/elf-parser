@@ -162,11 +162,16 @@ void print_elf_header64(Elf64_Ehdr elf_header)
 			printf("INTEL x86 (0x%x)\n", EM_386);
 			break;
 
-		case EM_ARM:
-			printf("ARM (0x%x)\n", EM_ARM);
+		case EM_X86_64:
+			printf("AMD x86_64 (0x%x)\n", EM_X86_64);
 			break;
+
+		case EM_AARCH64:
+			printf("AARCH64 (0x%x)\n", EM_AARCH64);
+			break;
+
 		default:
-			printf("Machine\t= 0x%x\n", elf_header.e_machine);
+			printf(" 0x%x\n", elf_header.e_machine);
 			break;
 	}
 
@@ -253,7 +258,7 @@ void read_section_header_table64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[
 
 	for(i=0; i<eh.e_shnum; i++) {
 		assert(read(fd, (void *)&sh_table[i], eh.e_shentsize)
-			 == eh.e_shentsize);
+				== eh.e_shentsize);
 	}
 
 }
@@ -263,7 +268,7 @@ char * read_section64(int32_t fd, Elf64_Shdr sh)
 	char* buff = malloc(sh.sh_size);
 	if(!buff) {
 		printf("%s:Failed to allocate %ldbytes\n",
-			__func__, sh.sh_size);
+				__func__, sh.sh_size);
 	}
 
 	assert(buff != NULL);
@@ -285,7 +290,7 @@ void print_section_headers64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
 	printf("========================================");
 	printf("========================================\n");
 	printf(" idx offset     load-addr  size       algn"
-		 " flags      type       section\n");
+			" flags      type       section\n");
 	printf("========================================");
 	printf("========================================\n");
 
@@ -306,9 +311,9 @@ void print_section_headers64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
 }
 
 void print_symbol_table64(int32_t fd,
-			Elf64_Ehdr eh,
-			Elf64_Shdr sh_table[],
-			uint32_t symbol_table)
+		Elf64_Ehdr eh,
+		Elf64_Shdr sh_table[],
+		uint32_t symbol_table)
 {
 
 	char *str_tbl;
@@ -342,7 +347,7 @@ void print_symbols64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
 
 	for(i=0; i<eh.e_shnum; i++) {
 		if ((sh_table[i].sh_type==SHT_SYMTAB)
-		 || (sh_table[i].sh_type==SHT_DYNSYM)) {
+				|| (sh_table[i].sh_type==SHT_DYNSYM)) {
 			printf("\n[Section %03d]", i);
 			print_symbol_table64(fd, eh, sh_table, i);
 		}
@@ -561,8 +566,9 @@ void print_elf_header(Elf32_Ehdr elf_header)
 		case EM_ARM:
 			printf("ARM (0x%x)\n", EM_ARM);
 			break;
+
 		default:
-			printf("Machine\t= 0x%x\n", elf_header.e_machine);
+			printf(" 0x%x\n", elf_header.e_machine);
 			break;
 	}
 
@@ -649,7 +655,7 @@ void read_section_header_table(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 
 	for(i=0; i<eh.e_shnum; i++) {
 		assert(read(fd, (void *)&sh_table[i], eh.e_shentsize)
-			 == eh.e_shentsize);
+				== eh.e_shentsize);
 	}
 
 }
@@ -659,7 +665,7 @@ char * read_section(int32_t fd, Elf32_Shdr sh)
 	char* buff = malloc(sh.sh_size);
 	if(!buff) {
 		printf("%s:Failed to allocate %dbytes\n",
-			__func__, sh.sh_size);
+				__func__, sh.sh_size);
 	}
 
 	assert(buff != NULL);
@@ -681,7 +687,7 @@ void print_section_headers(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 	printf("========================================");
 	printf("========================================\n");
 	printf(" idx offset     load-addr  size       algn"
-		 " flags      type       section\n");
+			" flags      type       section\n");
 	printf("========================================");
 	printf("========================================\n");
 
@@ -702,9 +708,9 @@ void print_section_headers(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 }
 
 void print_symbol_table(int32_t fd,
-			Elf32_Ehdr eh,
-			Elf32_Shdr sh_table[],
-			uint32_t symbol_table)
+		Elf32_Ehdr eh,
+		Elf32_Shdr sh_table[],
+		uint32_t symbol_table)
 {
 
 	char *str_tbl;
@@ -738,7 +744,7 @@ void print_symbols(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 
 	for(i=0; i<eh.e_shnum; i++) {
 		if ((sh_table[i].sh_type==SHT_SYMTAB)
-		 || (sh_table[i].sh_type==SHT_DYNSYM)) {
+				|| (sh_table[i].sh_type==SHT_DYNSYM)) {
 			printf("\n[Section %03d]", i);
 			print_symbol_table(fd, eh, sh_table, i);
 		}
@@ -791,10 +797,10 @@ EXIT:
 }
 
 bool is64Bit(Elf32_Ehdr eh) {
-    if (eh.e_ident[EI_CLASS] == ELFCLASS64)
-        return true;
-    else
-        return false;
+	if (eh.e_ident[EI_CLASS] == ELFCLASS64)
+		return true;
+	else
+		return false;
 }
 
 /* Main entry point of elf-parser */
@@ -820,70 +826,69 @@ int32_t main(int32_t argc, char *argv[])
 	if(!is_ELF(eh)) {
 		return 0;
 	}
-    if(is64Bit(eh)){
-        printf("in 64 bit\n");
-        Elf64_Ehdr eh64;		/* elf-header is fixed size */
-        Elf64_Shdr* sh_tbl;	/* section-header table is variable size */
+	if(is64Bit(eh)){
+		Elf64_Ehdr eh64;	/* elf-header is fixed size */
+		Elf64_Shdr* sh_tbl;	/* section-header table is variable size */
 
-        read_elf_header64(fd, &eh64);
-        print_elf_header64(eh64);
+		read_elf_header64(fd, &eh64);
+		print_elf_header64(eh64);
 
-        /* Section header table :  */
-        sh_tbl = malloc(eh64.e_shentsize * eh64.e_shnum);
-        if(!sh_tbl) {
-            printf("Failed to allocate %d bytes\n",
-                (eh64.e_shentsize * eh64.e_shnum));
-        }
-        read_section_header_table64(fd, eh64, sh_tbl);
-        print_section_headers64(fd, eh64, sh_tbl);
+		/* Section header table :  */
+		sh_tbl = malloc(eh64.e_shentsize * eh64.e_shnum);
+		if(!sh_tbl) {
+			printf("Failed to allocate %d bytes\n",
+					(eh64.e_shentsize * eh64.e_shnum));
+		}
+		read_section_header_table64(fd, eh64, sh_tbl);
+		print_section_headers64(fd, eh64, sh_tbl);
 
-        /* Symbol tables :
-        * sh_tbl[i].sh_type
-        * |`- SHT_SYMTAB
-        *  `- SHT_DYNSYM
-        */
-        print_symbols64(fd, eh64, sh_tbl);
+		/* Symbol tables :
+		 * sh_tbl[i].sh_type
+		 * |`- SHT_SYMTAB
+		 *  `- SHT_DYNSYM
+		 */
+		print_symbols64(fd, eh64, sh_tbl);
 
-        /* Save .text section as text.S
-        */ 
-        save_text_section64(fd, eh64, sh_tbl);
+		/* Save .text section as text.S
+		*/
+		save_text_section64(fd, eh64, sh_tbl);
 
-        /* Disassemble .text section
-        * Logs asm instructions to stdout
-        * Currently supports ARMv7
-        */
-        disassemble64(fd, eh64, sh_tbl);
+		/* Disassemble .text section
+		 * Logs asm instructions to stdout
+		 * Currently supports ARMv7
+		 */
+		disassemble64(fd, eh64, sh_tbl);
 
-    } else{
-        Elf32_Shdr* sh_tbl;	/* section-header table is variable size */
-        print_elf_header(eh);
+	} else{
+		Elf32_Shdr* sh_tbl;	/* section-header table is variable size */
+		print_elf_header(eh);
 
-        /* Section header table :  */
-        sh_tbl = malloc(eh.e_shentsize * eh.e_shnum);
-        if(!sh_tbl) {
-            printf("Failed to allocate %d bytes\n",
-                (eh.e_shentsize * eh.e_shnum));
-        }
-        read_section_header_table(fd, eh, sh_tbl);
-        print_section_headers(fd, eh, sh_tbl);
+		/* Section header table :  */
+		sh_tbl = malloc(eh.e_shentsize * eh.e_shnum);
+		if(!sh_tbl) {
+			printf("Failed to allocate %d bytes\n",
+					(eh.e_shentsize * eh.e_shnum));
+		}
+		read_section_header_table(fd, eh, sh_tbl);
+		print_section_headers(fd, eh, sh_tbl);
 
-        /* Symbol tables :
-        * sh_tbl[i].sh_type
-        * |`- SHT_SYMTAB
-        *  `- SHT_DYNSYM
-        */
-        print_symbols(fd, eh, sh_tbl);
+		/* Symbol tables :
+		 * sh_tbl[i].sh_type
+		 * |`- SHT_SYMTAB
+		 *  `- SHT_DYNSYM
+		 */
+		print_symbols(fd, eh, sh_tbl);
 
-        /* Save .text section as text.S
-        */ 
-        save_text_section(fd, eh, sh_tbl);
+		/* Save .text section as text.S
+		*/
+		save_text_section(fd, eh, sh_tbl);
 
-        /* Disassemble .text section
-        * Logs asm instructions to stdout
-        * Currently supports ARMv7
-        */
-        disassemble(fd, eh, sh_tbl);
-    }
+		/* Disassemble .text section
+		 * Logs asm instructions to stdout
+		 * Currently supports ARMv7
+		 */
+		disassemble(fd, eh, sh_tbl);
+	}
 
 	return 0;
 

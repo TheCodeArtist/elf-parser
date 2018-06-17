@@ -23,16 +23,16 @@ void disassemble(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr* sh_table)
 	assert(lseek(fd, sh_table[i].sh_offset, SEEK_SET)==sh_table[i].sh_offset);
 	buf = malloc(sh_table[i].sh_size);
 	if(!buf) {
-        	printf("Failed to allocate %dbytes!!\n", sh_table[i].sh_size);
-        	printf("Failed to disassemble!!\n");
-	        return;
+		printf("Failed to allocate %dbytes!!\n", sh_table[i].sh_size);
+		printf("Failed to disassemble!!\n");
+		return;
 	}
 	assert(read(fd, buf, sh_table[i].sh_size)==sh_table[i].sh_size);
 
 
 	/* Now buf contains the instructions (4bytes each) */
 
-}                                                                                                  
+}
 
 
 void disassemble64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr* sh_table)
@@ -57,13 +57,13 @@ void disassemble64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr* sh_table)
 	assert(lseek(fd, sh_table[i].sh_offset, SEEK_SET)==sh_table[i].sh_offset);
 	buf = malloc(sh_table[i].sh_size);
 	if(!buf) {
-        	printf("Failed to allocate %ldbytes!!\n", sh_table[i].sh_size);
-        	printf("Failed to disaassemble!!\n");
-	        return;
+		printf("Failed to allocate %ldbytes!!\n", sh_table[i].sh_size);
+		printf("Failed to disassemble!!\n");
+		return;
 	}
 	assert(read(fd, buf, sh_table[i].sh_size)==sh_table[i].sh_size);
 
 
 	/* Now buf contains the instructions (4bytes each) */
 
-}                                                                                                  
+}
