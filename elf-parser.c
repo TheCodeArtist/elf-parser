@@ -389,7 +389,7 @@ void save_text_section64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
 		goto EXIT;
 	}
 	assert(read(fd, buf, sh_table[i].sh_size)==sh_table[i].sh_size);
-	fd2 = open(pwd, O_RDWR|O_SYNC|O_CREAT);
+	fd2 = open(pwd, O_RDWR|O_SYNC|O_CREAT, 0644);
 	write(fd2, buf, sh_table[i].sh_size);
 	fsync(fd2);
 
@@ -786,7 +786,7 @@ void save_text_section(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 		goto EXIT;
 	}
 	assert(read(fd, buf, sh_table[i].sh_size)==sh_table[i].sh_size);
-	fd2 = open(pwd, O_RDWR|O_SYNC|O_CREAT);
+	fd2 = open(pwd, O_RDWR|O_SYNC|O_CREAT, 0644);
 	write(fd2, buf, sh_table[i].sh_size);
 	fsync(fd2);
 
