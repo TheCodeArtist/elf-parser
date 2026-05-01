@@ -14,6 +14,10 @@
 #define debug(...) \
             do { if (DEBUG) printf("<debug>:"__VA_ARGS__); } while (0)
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void disassemble(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr* sh_tbl);
 void disassemble64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr* sh_tbl);
 void read_elf_header64(int32_t fd, Elf64_Ehdr *elf_header);
@@ -35,4 +39,8 @@ void print_symbol_table(int32_t fd,Elf32_Ehdr eh,Elf32_Shdr sh_table[],uint32_t 
 void print_symbols(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[]);
 void save_text_section(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[]);
 bool is64Bit(Elf32_Ehdr eh);
+
+#ifdef __cplusplus
+}
+#endif
 
