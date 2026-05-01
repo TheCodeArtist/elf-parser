@@ -1,6 +1,6 @@
 # elf-parser
 
-Identify and extract sections of an ELF file. Learn how Linux binaries are laid out.
+Identify and extract sections of an ELF file. For learning how Linux binaries are laid out.
 
 ## What is an ELF file?
 
@@ -11,13 +11,13 @@ Layout:
 
 ```
 +------------------------+
-|      ELF header        |   Identifies the file.
+|      ELF header        |   identifies the file
 +------------------------+
-|    Program headers     |   How the loader loads it.
+|    Program headers     |   how the kernel loads it
 +------------------------+
-|  Sections (.text, ...) |   Code, Data, Symbols, Strings, ...
+|  Sections (.text, ...) |   code, data, symbols, strings
 +------------------------+
-|    Section headers     |   Describe each section.
+|    Section headers     |   describes each section
 +------------------------+
 ```
 
@@ -40,12 +40,6 @@ Writes `.text` to `text.S`.
 - `gcc hello.c -o hello && ./elfparser hello`
 - `*.a` — refused (it's an `ar` archive, not ELF)
 
-## Limitations
-
-- Disassembler is a stub. Reads `.text` into memory but does not decode.
-- 32-bit and 64-bit ELF parsing supported.
-- Use `readelf` or `objdump` for real work.
-
 ## Files
 
 - `elf-parser-main.c` — entry point (<100 lines)
@@ -55,11 +49,15 @@ Writes `.text` to `text.S`.
 
 ## Notes
 
+0. Use `readelf` or `objdump` for real work.
+
 1. Gap between ELF header and program header:
    - header ends at `e_ehsize`
    - program header starts at `e_phoff`
 
 2. `*.so` is ELF. `*.a` is an `ar` archive, not ELF.
+
+3. Disassembler is a stub. Reads `.text` into memory but does not decode.
 
 ## License
 
