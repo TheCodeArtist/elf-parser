@@ -1,3 +1,6 @@
+#ifndef ELF_PARSER_H
+#define ELF_PARSER_H
+
 #include <stdio.h>
 #include <assert.h>
 #include <fcntl.h>
@@ -43,4 +46,6 @@ bool is64Bit(Elf32_Ehdr eh);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* ELF_PARSER_H */
 
