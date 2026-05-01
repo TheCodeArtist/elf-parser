@@ -1,6 +1,6 @@
 #include <elf-parser.h>
 
-void read_elf_header64(int32_t fd, Elf64_Ehdr *elf_header)
+void read_elf_header64(int fd, Elf64_Ehdr *elf_header)
 {
 	assert(elf_header != NULL);
 	assert(lseek(fd, (off_t)0, SEEK_SET) == (off_t)0);
@@ -250,7 +250,7 @@ void print_elf_header64(Elf64_Ehdr elf_header)
 
 }
 
-void read_section_header_table64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
+void read_section_header_table64(int fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
 {
 	uint32_t i;
 
@@ -263,7 +263,7 @@ void read_section_header_table64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[
 
 }
 
-char * read_section64(int32_t fd, Elf64_Shdr sh)
+char * read_section64(int fd, Elf64_Shdr sh)
 {
 	char* buff = malloc(sh.sh_size);
 	if(!buff) {
@@ -278,7 +278,7 @@ char * read_section64(int32_t fd, Elf64_Shdr sh)
 	return buff;
 }
 
-void print_section_headers64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
+void print_section_headers64(int fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
 {
 	uint32_t i;
 	char* sh_str;	/* section-header string-table is also a section. */
@@ -310,7 +310,7 @@ void print_section_headers64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
 	printf("\n");	/* end of section header table */
 }
 
-void print_symbol_table64(int32_t fd,
+void print_symbol_table64(int fd,
 		Elf64_Ehdr eh,
 		Elf64_Shdr sh_table[],
 		uint32_t symbol_table)
@@ -341,7 +341,7 @@ void print_symbol_table64(int32_t fd,
 	}
 }
 
-void print_symbols64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
+void print_symbols64(int fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
 {
 	uint32_t i;
 
@@ -354,10 +354,10 @@ void print_symbols64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
 	}
 }
 
-void save_text_section64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
+void save_text_section64(int fd, Elf64_Ehdr eh, Elf64_Shdr sh_table[])
 {
 	uint32_t i;
-	int32_t fd2;	/* to write text.S in current directory */
+	int fd2;	/* to write text.S in current directory */
 	char* sh_str;	/* section-header string-table is also a section. */
 	char* buf;	/* buffer to hold contents of the .text section */
 
@@ -399,7 +399,7 @@ EXIT:
 
 }
 
-void read_elf_header(int32_t fd, Elf32_Ehdr *elf_header)
+void read_elf_header(int fd, Elf32_Ehdr *elf_header)
 {
 	assert(elf_header != NULL);
 	assert(lseek(fd, (off_t)0, SEEK_SET) == (off_t)0);
@@ -647,7 +647,7 @@ void print_elf_header(Elf32_Ehdr elf_header)
 
 }
 
-void read_section_header_table(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
+void read_section_header_table(int fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 {
 	uint32_t i;
 
@@ -660,7 +660,7 @@ void read_section_header_table(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 
 }
 
-char * read_section(int32_t fd, Elf32_Shdr sh)
+char * read_section(int fd, Elf32_Shdr sh)
 {
 	char* buff = malloc(sh.sh_size);
 	if(!buff) {
@@ -675,7 +675,7 @@ char * read_section(int32_t fd, Elf32_Shdr sh)
 	return buff;
 }
 
-void print_section_headers(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
+void print_section_headers(int fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 {
 	uint32_t i;
 	char* sh_str;	/* section-header string-table is also a section. */
@@ -707,7 +707,7 @@ void print_section_headers(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 	printf("\n");	/* end of section header table */
 }
 
-void print_symbol_table(int32_t fd,
+void print_symbol_table(int fd,
 		Elf32_Ehdr eh,
 		Elf32_Shdr sh_table[],
 		uint32_t symbol_table)
@@ -738,7 +738,7 @@ void print_symbol_table(int32_t fd,
 	}
 }
 
-void print_symbols(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
+void print_symbols(int fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 {
 	uint32_t i;
 
@@ -751,10 +751,10 @@ void print_symbols(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 	}
 }
 
-void save_text_section(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
+void save_text_section(int fd, Elf32_Ehdr eh, Elf32_Shdr sh_table[])
 {
 	uint32_t i;
-	int32_t fd2;	/* to write text.S in current directory */
+	int fd2;	/* to write text.S in current directory */
 	char* sh_str;	/* section-header string-table is also a section. */
 	char* buf;	/* buffer to hold contents of the .text section */
 

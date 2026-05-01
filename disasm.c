@@ -1,7 +1,7 @@
 #include <elf-parser.h>
 
 
-void disassemble(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr* sh_table)
+void disassemble(int fd, Elf32_Ehdr eh, Elf32_Shdr* sh_table)
 {
 	int32_t i;
 	char* sh_str;   /* section-header string-table is also a section. */
@@ -35,7 +35,7 @@ void disassemble(int32_t fd, Elf32_Ehdr eh, Elf32_Shdr* sh_table)
 }
 
 
-void disassemble64(int32_t fd, Elf64_Ehdr eh, Elf64_Shdr* sh_table)
+void disassemble64(int fd, Elf64_Ehdr eh, Elf64_Shdr* sh_table)
 {
 	int32_t i;
 	char* sh_str;   /* section-header string-table is also a section. */

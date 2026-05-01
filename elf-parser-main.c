@@ -1,10 +1,10 @@
 #include <elf-parser.h>
 
 /* Main entry point of elf-parser */
-int32_t main(int32_t argc, char *argv[])
+int main(int argc, char *argv[])
 {
 
-	int32_t fd;
+	int fd;
 	Elf32_Ehdr eh;		/* elf-header is fixed size */
 
 	if(argc!=2) {
@@ -90,4 +90,3 @@ int32_t main(int32_t argc, char *argv[])
 	return 0;
 
 }
-
