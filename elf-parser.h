@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <inttypes.h> /* for PRIx64 and PRIu64 */
 
 #include <elf.h>
 
